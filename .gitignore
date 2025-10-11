@@ -1,0 +1,26 @@
+# Archivos compilados de Prolog
+*.qlf
+*.qly
+
+# Archivos temporales del sistema
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Archivos de IDEs
+.vscode/
+.idea/
+*.sublime-*
+
+# Archivos de documentación temporales
+*.aux
+*.log
+*.out
+*.toc
+*.pdf~
+
+# Carpetas de backup
+backup/
+*.bak
