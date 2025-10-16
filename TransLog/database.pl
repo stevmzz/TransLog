@@ -449,6 +449,147 @@ traducir_sustantivo(horses, caballos).
 traducir_sustantivo(cow, vaca).
 traducir_sustantivo(cows, vacas).
 
+% === ADJETIVOS ===
+% adjetivo(idioma, adjetivo, genero, numero)
+
+% Español:
+adjetivo(esp, grande, _, _).
+adjetivo(esp, pequeño, masc, _).
+adjetivo(esp, pequeña, fem, _).
+adjetivo(esp, rojo, masc, _).
+adjetivo(esp, roja, fem, _).
+adjetivo(esp, bonito, masc, _).
+adjetivo(esp, bonita, fem, _).
+adjetivo(esp, feo, masc, _).
+adjetivo(esp, fea, fem, _).
+adjetivo(esp, alto, masc, _).
+adjetivo(esp, alta, fem, _).
+adjetivo(esp, bajo, masc, _).
+adjetivo(esp, baja, fem, _).
+adjetivo(esp, nuevo, masc, _).
+adjetivo(esp, nueva, fem, _).
+adjetivo(esp, viejo, masc, _).
+adjetivo(esp, vieja, fem, _).
+adjetivo(esp, joven, _, _).
+adjetivo(esp, feliz, _, _).
+adjetivo(esp, triste, _, _).
+adjetivo(esp, rápido, masc, _).
+adjetivo(esp, rápida, fem, _).
+adjetivo(esp, lento, masc, _).
+adjetivo(esp, lenta, fem, _).
+adjetivo(esp, bueno, masc, _).
+adjetivo(esp, buena, fem, _).
+adjetivo(esp, malo, masc, _).
+adjetivo(esp, mala, fem, _).
+adjetivo(esp, blanco, masc, _).
+adjetivo(esp, blanca, fem, _).
+adjetivo(esp, negro, masc, _).
+adjetivo(esp, negra, fem, _).
+adjetivo(esp, azul, _, _).
+adjetivo(esp, verde, _, _).
+adjetivo(esp, amarillo, masc, _).
+adjetivo(esp, amarilla, fem, _).
+adjetivo(esp, inteligente, _, _).
+adjetivo(esp, divertido, masc, _).
+adjetivo(esp, divertida, fem, _).
+adjetivo(esp, aburrido, masc, _).
+adjetivo(esp, aburrida, fem, _).
+
+% Inglés:
+adjetivo(eng, big, _, _).
+adjetivo(eng, small, _, _).
+adjetivo(eng, red, _, _).
+adjetivo(eng, beautiful, _, _).
+adjetivo(eng, ugly, _, _).
+adjetivo(eng, tall, _, _).
+adjetivo(eng, short, _, _).
+adjetivo(eng, new, _, _).
+adjetivo(eng, old, _, _).
+adjetivo(eng, young, _, _).
+adjetivo(eng, happy, _, _).
+adjetivo(eng, sad, _, _).
+adjetivo(eng, fast, _, _).
+adjetivo(eng, slow, _, _).
+adjetivo(eng, good, _, _).
+adjetivo(eng, bad, _, _).
+adjetivo(eng, white, _, _).
+adjetivo(eng, black, _, _).
+adjetivo(eng, blue, _, _).
+adjetivo(eng, green, _, _).
+adjetivo(eng, yellow, _, _).
+adjetivo(eng, intelligent, _, _).
+adjetivo(eng, fun, _, _).
+adjetivo(eng, boring, _, _).
+
+% Traducción de adjetivos
+traducir_adjetivo(grande, big).
+traducir_adjetivo(pequeño, small).
+traducir_adjetivo(pequeña, small).
+traducir_adjetivo(rojo, red).
+traducir_adjetivo(roja, red).
+traducir_adjetivo(bonito, beautiful).
+traducir_adjetivo(bonita, beautiful).
+traducir_adjetivo(feo, ugly).
+traducir_adjetivo(fea, ugly).
+traducir_adjetivo(alto, tall).
+traducir_adjetivo(alta, tall).
+traducir_adjetivo(bajo, short).
+traducir_adjetivo(baja, short).
+traducir_adjetivo(nuevo, new).
+traducir_adjetivo(nueva, new).
+traducir_adjetivo(viejo, old).
+traducir_adjetivo(vieja, old).
+traducir_adjetivo(joven, young).
+traducir_adjetivo(feliz, happy).
+traducir_adjetivo(triste, sad).
+traducir_adjetivo(rápido, fast).
+traducir_adjetivo(rápida, fast).
+traducir_adjetivo(lento, slow).
+traducir_adjetivo(lenta, slow).
+traducir_adjetivo(bueno, good).
+traducir_adjetivo(buena, good).
+traducir_adjetivo(malo, bad).
+traducir_adjetivo(mala, bad).
+traducir_adjetivo(blanco, white).
+traducir_adjetivo(blanca, white).
+traducir_adjetivo(negro, black).
+traducir_adjetivo(negra, black).
+traducir_adjetivo(azul, blue).
+traducir_adjetivo(verde, green).
+traducir_adjetivo(amarillo, yellow).
+traducir_adjetivo(amarilla, yellow).
+traducir_adjetivo(inteligente, intelligent).
+traducir_adjetivo(divertido, fun).
+traducir_adjetivo(divertida, fun).
+traducir_adjetivo(aburrido, boring).
+traducir_adjetivo(aburrida, boring).
+
+% Traducción inversa
+traducir_adjetivo(big, grande).
+traducir_adjetivo(small, pequeño).
+traducir_adjetivo(red, rojo).
+traducir_adjetivo(beautiful, bonito).
+traducir_adjetivo(ugly, feo).
+traducir_adjetivo(tall, alto).
+traducir_adjetivo(short, bajo).
+traducir_adjetivo(new, nuevo).
+traducir_adjetivo(old, viejo).
+traducir_adjetivo(young, joven).
+traducir_adjetivo(happy, feliz).
+traducir_adjetivo(sad, triste).
+traducir_adjetivo(fast, rápido).
+traducir_adjetivo(slow, lento).
+traducir_adjetivo(good, bueno).
+traducir_adjetivo(bad, malo).
+traducir_adjetivo(white, blanco).
+traducir_adjetivo(black, negro).
+traducir_adjetivo(blue, azul).
+traducir_adjetivo(green, verde).
+traducir_adjetivo(yellow, amarillo).
+traducir_adjetivo(intelligent, inteligente).
+traducir_adjetivo(fun, divertido).
+traducir_adjetivo(boring, aburrido).
+
 % === VERBOS (PRESENTE) ===
 % verbo(idioma, verbo, persona, numero)
 
@@ -591,6 +732,18 @@ verbo(esp, cocina, tercera, sing).
 verbo(esp, cocinamos, primera, plur).
 verbo(esp, cocinan, tercera, plur).
 
+verbo(esp, estoy, primera, sing).
+verbo(esp, estás, segunda, sing).
+verbo(esp, está, tercera, sing).
+verbo(esp, estamos, primera, plur).
+verbo(esp, están, tercera, plur).
+
+verbo(esp, tengo, primera, sing).
+verbo(esp, tienes, segunda, sing).
+verbo(esp, tiene, tercera, sing).
+verbo(esp, tenemos, primera, plur).
+verbo(esp, tienen, tercera, plur).
+
 % Inglés:
 verbo(eng, run, _, _).
 verbo(eng, runs, tercera, sing).
@@ -638,6 +791,11 @@ verbo(eng, swim, _, _).
 verbo(eng, swims, tercera, sing).
 verbo(eng, cook, _, _).
 verbo(eng, cooks, tercera, sing).
+verbo(eng, am, primera, sing).
+verbo(eng, are, segunda, _).
+verbo(eng, is, tercera, sing).
+verbo(eng, have, _, _).
+verbo(eng, has, tercera, sing).
 
 % Traducción de verbos (español -> inglés)
 traducir_verbo(corro, run).
@@ -778,6 +936,18 @@ traducir_verbo(cocina, cooks).
 traducir_verbo(cocinamos, cook).
 traducir_verbo(cocinan, cook).
 
+traducir_verbo(estoy, am).
+traducir_verbo(estás, are).
+traducir_verbo(está, is).
+traducir_verbo(estamos, are).
+traducir_verbo(están, are).
+
+traducir_verbo(tengo, have).
+traducir_verbo(tienes, have).
+traducir_verbo(tiene, has).
+traducir_verbo(tenemos, have).
+traducir_verbo(tienen, have).
+
 % Traducción inversa (inglés -> español)
 traducir_verbo(run, corro).
 traducir_verbo(runs, corre).
@@ -825,6 +995,11 @@ traducir_verbo(swim, nado).
 traducir_verbo(swims, nada).
 traducir_verbo(cook, cocino).
 traducir_verbo(cooks, cocina).
+traducir_verbo(am, estoy).
+traducir_verbo(are, estás).
+traducir_verbo(is, está).
+traducir_verbo(have, tengo).
+traducir_verbo(has, tiene).
 
 % === PRONOMBRES ===
 % pronombre(idioma, pronombre, persona, numero)
@@ -875,146 +1050,38 @@ traducir_pronombre(it, eso).
 traducir_pronombre(we, nosotros).
 traducir_pronombre(they, ellos).
 
-% === ADJETIVOS ===
-% adjetivo(idioma, adjetivo, genero, numero)
+% === INTERROGATIVOS ===
+% interrogativo(idioma, palabra)
 
 % Español:
-adjetivo(esp, grande, _, _).
-adjetivo(esp, pequeño, masc, _).
-adjetivo(esp, pequeña, fem, _).
-adjetivo(esp, rojo, masc, _).
-adjetivo(esp, roja, fem, _).
-adjetivo(esp, bonito, masc, _).
-adjetivo(esp, bonita, fem, _).
-adjetivo(esp, feo, masc, _).
-adjetivo(esp, fea, fem, _).
-adjetivo(esp, alto, masc, _).
-adjetivo(esp, alta, fem, _).
-adjetivo(esp, bajo, masc, _).
-adjetivo(esp, baja, fem, _).
-adjetivo(esp, nuevo, masc, _).
-adjetivo(esp, nueva, fem, _).
-adjetivo(esp, viejo, masc, _).
-adjetivo(esp, vieja, fem, _).
-adjetivo(esp, joven, _, _).
-adjetivo(esp, feliz, _, _).
-adjetivo(esp, triste, _, _).
-adjetivo(esp, rápido, masc, _).
-adjetivo(esp, rápida, fem, _).
-adjetivo(esp, lento, masc, _).
-adjetivo(esp, lenta, fem, _).
-adjetivo(esp, bueno, masc, _).
-adjetivo(esp, buena, fem, _).
-adjetivo(esp, malo, masc, _).
-adjetivo(esp, mala, fem, _).
-adjetivo(esp, blanco, masc, _).
-adjetivo(esp, blanca, fem, _).
-adjetivo(esp, negro, masc, _).
-adjetivo(esp, negra, fem, _).
-adjetivo(esp, azul, _, _).
-adjetivo(esp, verde, _, _).
-adjetivo(esp, amarillo, masc, _).
-adjetivo(esp, amarilla, fem, _).
-adjetivo(esp, inteligente, _, _).
-adjetivo(esp, divertido, masc, _).
-adjetivo(esp, divertida, fem, _).
-adjetivo(esp, aburrido, masc, _).
-adjetivo(esp, aburrida, fem, _).
+interrogativo(esp, cómo).
+interrogativo(esp, cuántos).
+interrogativo(esp, cuál).
+interrogativo(esp, dónde).
+interrogativo(esp, quién).
+interrogativo(esp, qué).
 
 % Inglés:
-adjetivo(eng, big, _, _).
-adjetivo(eng, small, _, _).
-adjetivo(eng, red, _, _).
-adjetivo(eng, beautiful, _, _).
-adjetivo(eng, ugly, _, _).
-adjetivo(eng, tall, _, _).
-adjetivo(eng, short, _, _).
-adjetivo(eng, new, _, _).
-adjetivo(eng, old, _, _).
-adjetivo(eng, young, _, _).
-adjetivo(eng, happy, _, _).
-adjetivo(eng, sad, _, _).
-adjetivo(eng, fast, _, _).
-adjetivo(eng, slow, _, _).
-adjetivo(eng, good, _, _).
-adjetivo(eng, bad, _, _).
-adjetivo(eng, white, _, _).
-adjetivo(eng, black, _, _).
-adjetivo(eng, blue, _, _).
-adjetivo(eng, green, _, _).
-adjetivo(eng, yellow, _, _).
-adjetivo(eng, intelligent, _, _).
-adjetivo(eng, fun, _, _).
-adjetivo(eng, boring, _, _).
+interrogativo(eng, how).
+interrogativo(eng, what).
+interrogativo(eng, where).
+interrogativo(eng, who).
+interrogativo(eng, which).
 
-% Traducción de adjetivos
-traducir_adjetivo(grande, big).
-traducir_adjetivo(pequeño, small).
-traducir_adjetivo(pequeña, small).
-traducir_adjetivo(rojo, red).
-traducir_adjetivo(roja, red).
-traducir_adjetivo(bonito, beautiful).
-traducir_adjetivo(bonita, beautiful).
-traducir_adjetivo(feo, ugly).
-traducir_adjetivo(fea, ugly).
-traducir_adjetivo(alto, tall).
-traducir_adjetivo(alta, tall).
-traducir_adjetivo(bajo, short).
-traducir_adjetivo(baja, short).
-traducir_adjetivo(nuevo, new).
-traducir_adjetivo(nueva, new).
-traducir_adjetivo(viejo, old).
-traducir_adjetivo(vieja, old).
-traducir_adjetivo(joven, young).
-traducir_adjetivo(feliz, happy).
-traducir_adjetivo(triste, sad).
-traducir_adjetivo(rápido, fast).
-traducir_adjetivo(rápida, fast).
-traducir_adjetivo(lento, slow).
-traducir_adjetivo(lenta, slow).
-traducir_adjetivo(bueno, good).
-traducir_adjetivo(buena, good).
-traducir_adjetivo(malo, bad).
-traducir_adjetivo(mala, bad).
-traducir_adjetivo(blanco, white).
-traducir_adjetivo(blanca, white).
-traducir_adjetivo(negro, black).
-traducir_adjetivo(negra, black).
-traducir_adjetivo(azul, blue).
-traducir_adjetivo(verde, green).
-traducir_adjetivo(amarillo, yellow).
-traducir_adjetivo(amarilla, yellow).
-traducir_adjetivo(inteligente, intelligent).
-traducir_adjetivo(divertido, fun).
-traducir_adjetivo(divertida, fun).
-traducir_adjetivo(aburrido, boring).
-traducir_adjetivo(aburrida, boring).
+% Traducción de interrogativos (español -> inglés)
+traducir_interrogativo(cómo, how).
+traducir_interrogativo(cuántos, how).
+traducir_interrogativo(cuál, which).
+traducir_interrogativo(dónde, where).
+traducir_interrogativo(quién, who).
+traducir_interrogativo(qué, what).
 
-% Traducción inversa
-traducir_adjetivo(big, grande).
-traducir_adjetivo(small, pequeño).
-traducir_adjetivo(red, rojo).
-traducir_adjetivo(beautiful, bonito).
-traducir_adjetivo(ugly, feo).
-traducir_adjetivo(tall, alto).
-traducir_adjetivo(short, bajo).
-traducir_adjetivo(new, nuevo).
-traducir_adjetivo(old, viejo).
-traducir_adjetivo(young, joven).
-traducir_adjetivo(happy, feliz).
-traducir_adjetivo(sad, triste).
-traducir_adjetivo(fast, rápido).
-traducir_adjetivo(slow, lento).
-traducir_adjetivo(good, bueno).
-traducir_adjetivo(bad, malo).
-traducir_adjetivo(white, blanco).
-traducir_adjetivo(black, negro).
-traducir_adjetivo(blue, azul).
-traducir_adjetivo(green, verde).
-traducir_adjetivo(yellow, amarillo).
-traducir_adjetivo(intelligent, inteligente).
-traducir_adjetivo(fun, divertido).
-traducir_adjetivo(boring, aburrido).
+% Traducción inversa (inglés -> español)
+traducir_interrogativo(how, cómo).
+traducir_interrogativo(what, qué).
+traducir_interrogativo(where, dónde).
+traducir_interrogativo(who, quién).
+traducir_interrogativo(which, cuál).
 
 % === PREPOSICIONES ===
 % preposicion(idioma, preposicion)
