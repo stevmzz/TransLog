@@ -126,13 +126,6 @@ obtener_genero_numero(sn(_, _, Sust, _), Idioma, Gen, Num) :-
     sustantivo(Idioma, Sust, Gen, Num).
 
 % === PREDICADOS DE VALIDACIÓN ===
-% validar_concordancia(+Genero1, +Numero1, +Genero2, +Numero2)
-% Verifica que haya concordancia entre géneros y números
-
-validar_concordancia(Gen1, Num1, Gen2, Num2) :-
-    ( Gen1 = Gen2 ; Gen1 = _ ; Gen2 = _ ),
-    ( Num1 = Num2 ; Num1 = _ ; Num2 = _ ).
-
 % es_sn_valido(+SN, +Idioma)
 % Verifica que un SN sea válido en el idioma especificado
 
@@ -156,7 +149,8 @@ validar_concordancia_sn(vacio, _, _) :- !.
 validar_concordancia_sn(Art, Sust, Idioma) :-
     articulo(Idioma, Art, GenArt, NumArt),
     sustantivo(Idioma, Sust, GenSust, NumSust),
-    validar_concordancia(GenArt, NumArt, GenSust, NumSust).
+    GenArt = GenSust,
+    NumArt = NumSust.
 
 % validar_lista_adjetivos(+Lista, +Idioma)
 % Verifica que todos los adjetivos en una lista sean válidos
@@ -171,24 +165,53 @@ validar_lista_adjetivos([Adj|Rest], Idioma) :-
 % reconstruir_sn(+Articulo, +Adjetivos, +Sustantivo, +Idioma, -SN)
 % Reconstruye un SN desde sus componentes
 
-reconstruir_sn(ninguno, Adjetivos, Sustantivo, Idioma, sn(vacio, Adj1, Sustantivo, Adj2)) :-
-    repartir_adjetivos(Adjetivos, Adj1, Adj2),
-    es_sn_valido(sn(vacio, Adj1, Sustantivo, Adj2), Idioma).
+reconstruir_sn(Articulo, Adjetivos, Sustantivo, Idioma, sn(Art, Adjetivos, Sustantivo, [])) :-
+    ( Articulo = ninguno -> Art = vacio ; Art = Articulo ),
+    es_sn_valido(sn(Art, Adjetivos, Sustantivo, []), Idioma).
 
-reconstruir_sn(Articulo, Adjetivos, Sustantivo, Idioma, sn(Articulo, Adj1, Sustantivo, Adj2)) :-
-    Articulo \= ninguno,
-    repartir_adjetivos(Adjetivos, Adj1, Adj2),
-    es_sn_valido(sn(Articulo, Adj1, Sustantivo, Adj2), Idioma).
+% === PREDICADOS DE TRADUCCIÓN ===
+% traducir_sn(+SNOrigen, +IdiomaOrigen, +IdiomaDestino, -SNDestino)
+% Traduce un SN completo de un idioma a otro
 
-% repartir_adjetivos(+Adjetivos, -Antes, -Despues)
-% Reparte los adjetivos (simplemente todos antes por ahora)
+traducir_sn(SNOrigen, IdiomaOrigen, IdiomaDestino, SNDestino) :-
+    % Descomponer el SN origen
+    descomponer_sn(SNOrigen, Articulo, Adjetivos, Sustantivo, Genero, Numero, IdiomaOrigen),
+    % Traducir artículo
+    traducir_articulo_con_contexto(Articulo, Genero, Numero, IdiomaOrigen, IdiomaDestino, ArticuloTrad),
+    % Traducir adjetivos
+    maplist(traducir_palabra(adjetivo, IdiomaOrigen, IdiomaDestino), Adjetivos, AdjetivosTrad),
+    % Traducir sustantivo
+    traducir_palabra(sustantivo, IdiomaOrigen, IdiomaDestino, Sustantivo, SustantivoTrad),
+    % Reconstruir el SN en el idioma destino
+    reconstruir_sn(ArticuloTrad, AdjetivosTrad, SustantivoTrad, IdiomaDestino, SNDestino).
 
-repartir_adjetivos(Adjetivos, Adjetivos, []).
+% traducir_articulo_con_contexto(+Articulo, +Genero, +Numero, +IdiomaOrigen, +IdiomaDestino, -ArticuloTrad)
+% Traduce un artículo considerando género y número
+
+traducir_articulo_con_contexto(ninguno, _, _, _, _, ninguno) :- !.
+
+traducir_articulo_con_contexto(Articulo, Genero, Numero, esp, eng, ArticuloTrad) :-
+    traducir_articulo(Articulo, ArticuloTrad).
+
+traducir_articulo_con_contexto(Articulo, Genero, Numero, eng, esp, ArticuloTrad) :-
+    traducir_articulo_ctx(Articulo, ArticuloTrad, Genero, Numero).
+
+% traducir_palabra(+Tipo, +IdiomaOrigen, +IdiomaDestino, +Palabra, -PalabraTrad)
+% Predicate genérico para traducir palabras según su tipo
+
+traducir_palabra(adjetivo, IdiomaOrigen, IdiomaDestino, Palabra, PalabraTrad) :-
+    traducir_adjetivo(Palabra, PalabraTrad).
+
+traducir_palabra(sustantivo, IdiomaOrigen, IdiomaDestino, Palabra, PalabraTrad) :-
+    traducir_sustantivo(Palabra, PalabraTrad).
+
+traducir_palabra(verbo, IdiomaOrigen, IdiomaDestino, Palabra, PalabraTrad) :-
+    traducir_verbo(Palabra, PalabraTrad).
 
 % === PREDICADOS DE INFORMACIÓN ===
-% info_sn(+SN, +Idioma, -Info)
-% Retorna información completa sobre un SN
+% obtener_info_sn(+SN, +Idioma, -Articulo, -Adjetivos, -Sustantivo, -Genero, -Numero)
+% Obtiene información completa sobre un SN de forma legible
 
-info_sn(SN, Idioma, info(Articulo, Adjetivos, Sustantivo, Genero, Numero)) :-
+obtener_info_sn(SN, Idioma, Articulo, Adjetivos, Sustantivo, Genero, Numero) :-
     descomponer_sn(SN, Articulo, Adjetivos, Sustantivo, Genero, Numero, Idioma),
     es_sn_valido(SN, Idioma).
