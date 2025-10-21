@@ -19,6 +19,19 @@ sn_eng(Gen, Num, sn(Art, Adj1, Sust, Adj2)) -->
     sustantivo_eng(Gen, Num, Sust),
     adjetivos_eng(Gen, Num, Adj2).
 
+% === SINTAGMA VERBAL (SV) ===
+% sv_esp(-Estructura)//
+% Reconoce un SV completo en español (verbo conjugado)
+
+sv_esp(sv(Verbo)) -->
+    verbo_esp(Verbo).
+
+% sv_eng(-Estructura)//
+% Reconoce un SV completo en inglés (verbo conjugado)
+
+sv_eng(sv(Verbo)) -->
+    verbo_eng(Verbo).
+
 % === ARTÍCULOS (OPCIONALES) ===
 % articulo_opt_esp(-Genero, -Numero, -Articulo)//
 
@@ -78,7 +91,22 @@ sustantivo_eng(Gen, Num, Sust) -->
     [Palabra],
     { sustantivo(eng, Palabra, Gen, Num), Sust = Palabra }.
 
-% === PREDICADOS DE PARSING ===
+% === VERBOS ===
+% verbo_esp(-Verbo)//
+% Reconoce un verbo conjugado en español
+
+verbo_esp(Verbo) -->
+    [Palabra],
+    { verbo(esp, Palabra, _, _), Verbo = Palabra }.
+
+% verbo_eng(-Verbo)//
+% Reconoce un verbo conjugado en inglés
+
+verbo_eng(Verbo) -->
+    [Palabra],
+    { verbo(eng, Palabra, _, _), Verbo = Palabra }.
+
+% === PREDICADOS DE PARSING (SN) ===
 % parsear_sn(+Lista, +Idioma, -SN, -Resto)
 % Intenta parsear un SN desde una lista de palabras
 
@@ -88,7 +116,17 @@ parsear_sn(Lista, esp, SN, Resto) :-
 parsear_sn(Lista, eng, SN, Resto) :-
     phrase(sn_eng(_, _, SN), Lista, Resto).
 
-% === PREDICADOS DE DESCOMPOSICIÓN ===
+% === PREDICADOS DE PARSING (SV) ===
+% parsear_sv(+Lista, +Idioma, -SV, -Resto)
+% Intenta parsear un SV desde una lista de palabras
+
+parsear_sv(Lista, esp, SV, Resto) :-
+    phrase(sv_esp(SV), Lista, Resto).
+
+parsear_sv(Lista, eng, SV, Resto) :-
+    phrase(sv_eng(SV), Lista, Resto).
+
+% === PREDICADOS DE DESCOMPOSICIÓN (SN) ===
 % descomponer_sn(+SN, -Articulo, -Adjetivos, -Sustantivo, -Genero, -Numero, +Idioma)
 % Descompone un SN parseado en sus componentes
 
@@ -102,6 +140,14 @@ descomponer_sn(sn(Art, Adj1, Sust, Adj2), Articulo, Adjetivos, Sustantivo, Gener
     % Obtener género y número del sustantivo
     sustantivo(Idioma, Sust, Genero, Numero).
 
+% === PREDICADOS DE DESCOMPOSICIÓN (SV) ===
+% descomponer_sv(+SV, -Verbo, +Idioma)
+% Descompone un SV parseado en sus componentes
+
+descomponer_sv(sv(Verbo), Verbo, Idioma) :-
+    verbo(Idioma, Verbo, _, _).
+
+% === PREDICADOS GETTER (SN) ===
 % obtener_sustantivo(+SN, -Sustantivo)
 % Extrae el sustantivo del SN
 
@@ -125,7 +171,13 @@ obtener_adjetivos(sn(_, Adj1, _, Adj2), Adjetivos) :-
 obtener_genero_numero(sn(_, _, Sust, _), Idioma, Gen, Num) :-
     sustantivo(Idioma, Sust, Gen, Num).
 
-% === PREDICADOS DE VALIDACIÓN ===
+% === PREDICADOS GETTER (SV) ===
+% obtener_verbo(+SV, -Verbo)
+% Extrae el verbo del SV
+
+obtener_verbo(sv(Verbo), Verbo).
+
+% === PREDICADOS DE VALIDACIÓN (SN) ===
 % es_sn_valido(+SN, +Idioma)
 % Verifica que un SN sea válido en el idioma especificado
 
@@ -161,7 +213,14 @@ validar_lista_adjetivos([Adj|Rest], Idioma) :-
     adjetivo(Idioma, Adj, _, _),
     validar_lista_adjetivos(Rest, Idioma).
 
-% === PREDICADOS DE RECONSTRUCCIÓN ===
+% === PREDICADOS DE VALIDACIÓN (SV) ===
+% es_sv_valido(+SV, +Idioma)
+% Verifica que un SV sea válido en el idioma especificado
+
+es_sv_valido(sv(Verbo), Idioma) :-
+    verbo(Idioma, Verbo, _, _).
+
+% === PREDICADOS DE RECONSTRUCCIÓN (SN) ===
 % reconstruir_sn(+Articulo, +Adjetivos, +Sustantivo, +Idioma, -SN)
 % Reconstruye un SN desde sus componentes
 
@@ -169,7 +228,14 @@ reconstruir_sn(Articulo, Adjetivos, Sustantivo, Idioma, sn(Art, Adjetivos, Susta
     ( Articulo = ninguno -> Art = vacio ; Art = Articulo ),
     es_sn_valido(sn(Art, Adjetivos, Sustantivo, []), Idioma).
 
-% === PREDICADOS DE TRADUCCIÓN ===
+% === PREDICADOS DE RECONSTRUCCIÓN (SV) ===
+% reconstruir_sv(+Verbo, +Idioma, -SV)
+% Reconstruye un SV desde sus componentes
+
+reconstruir_sv(Verbo, Idioma, sv(Verbo)) :-
+    es_sv_valido(sv(Verbo), Idioma).
+
+% === PREDICADOS DE TRADUCCIÓN (SN) ===
 % traducir_sn(+SNOrigen, +IdiomaOrigen, +IdiomaDestino, -SNDestino)
 % Traduce un SN completo de un idioma a otro
 
@@ -179,33 +245,46 @@ traducir_sn(SNOrigen, IdiomaOrigen, IdiomaDestino, SNDestino) :-
     % Traducir artículo
     traducir_articulo_con_contexto(Articulo, Genero, Numero, IdiomaOrigen, IdiomaDestino, ArticuloTrad),
     % Traducir adjetivos
-    maplist(traducir_palabra(adjetivo, IdiomaOrigen, IdiomaDestino), Adjetivos, AdjetivosTrad),
+    maplist(traducir_palabra(adjetivo), Adjetivos, AdjetivosTrad),
     % Traducir sustantivo
-    traducir_palabra(sustantivo, IdiomaOrigen, IdiomaDestino, Sustantivo, SustantivoTrad),
+    traducir_palabra(sustantivo, Sustantivo, SustantivoTrad),
     % Reconstruir el SN en el idioma destino
     reconstruir_sn(ArticuloTrad, AdjetivosTrad, SustantivoTrad, IdiomaDestino, SNDestino).
 
+% === PREDICADOS DE TRADUCCIÓN (SV) ===
+% traducir_sv(+SVOrigen, +IdiomaOrigen, +IdiomaDestino, -SVDestino)
+% Traduce un SV completo de un idioma a otro
+
+traducir_sv(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino) :-
+    % Descomponer el SV origen
+    descomponer_sv(SVOrigen, Verbo, IdiomaOrigen),
+    % Traducir el verbo directamente (ya conjugado)
+    traducir_palabra(verbo, Verbo, VerboCorrecto),
+    % Reconstruir el SV en el idioma destino
+    reconstruir_sv(VerboCorrecto, IdiomaDestino, SVDestino).
+
+% === PREDICADOS AUXILIARES DE TRADUCCIÓN ===
 % traducir_articulo_con_contexto(+Articulo, +Genero, +Numero, +IdiomaOrigen, +IdiomaDestino, -ArticuloTrad)
 % Traduce un artículo considerando género y número
 
 traducir_articulo_con_contexto(ninguno, _, _, _, _, ninguno) :- !.
 
-traducir_articulo_con_contexto(Articulo, Genero, Numero, esp, eng, ArticuloTrad) :-
+traducir_articulo_con_contexto(Articulo, _, _, esp, eng, ArticuloTrad) :-
     traducir_articulo(Articulo, ArticuloTrad).
 
 traducir_articulo_con_contexto(Articulo, Genero, Numero, eng, esp, ArticuloTrad) :-
     traducir_articulo_ctx(Articulo, ArticuloTrad, Genero, Numero).
 
-% traducir_palabra(+Tipo, +IdiomaOrigen, +IdiomaDestino, +Palabra, -PalabraTrad)
-% Predicate genérico para traducir palabras según su tipo
+% traducir_palabra(+Tipo, +Palabra, -PalabraTrad)
+% Predicado genérico para traducir palabras según su tipo
 
-traducir_palabra(adjetivo, IdiomaOrigen, IdiomaDestino, Palabra, PalabraTrad) :-
+traducir_palabra(adjetivo, Palabra, PalabraTrad) :-
     traducir_adjetivo(Palabra, PalabraTrad).
 
-traducir_palabra(sustantivo, IdiomaOrigen, IdiomaDestino, Palabra, PalabraTrad) :-
+traducir_palabra(sustantivo, Palabra, PalabraTrad) :-
     traducir_sustantivo(Palabra, PalabraTrad).
 
-traducir_palabra(verbo, IdiomaOrigen, IdiomaDestino, Palabra, PalabraTrad) :-
+traducir_palabra(verbo, Palabra, PalabraTrad) :-
     traducir_verbo(Palabra, PalabraTrad).
 
 % === PREDICADOS DE INFORMACIÓN ===
@@ -215,3 +294,10 @@ traducir_palabra(verbo, IdiomaOrigen, IdiomaDestino, Palabra, PalabraTrad) :-
 obtener_info_sn(SN, Idioma, Articulo, Adjetivos, Sustantivo, Genero, Numero) :-
     descomponer_sn(SN, Articulo, Adjetivos, Sustantivo, Genero, Numero, Idioma),
     es_sn_valido(SN, Idioma).
+
+% obtener_info_sv(+SV, +Idioma, -Verbo)
+% Obtiene información completa sobre un SV de forma legible
+
+obtener_info_sv(SV, Idioma, Verbo) :-
+    descomponer_sv(SV, Verbo, Idioma),
+    es_sv_valido(SV, Idioma).
