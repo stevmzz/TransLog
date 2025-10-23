@@ -147,36 +147,6 @@ descomponer_sn(sn(Art, Adj1, Sust, Adj2), Articulo, Adjetivos, Sustantivo, Gener
 descomponer_sv(sv(Verbo), Verbo, Idioma) :-
     verbo(Idioma, Verbo, _, _).
 
-% === PREDICADOS GETTER (SN) ===
-% obtener_sustantivo(+SN, -Sustantivo)
-% Extrae el sustantivo del SN
-
-obtener_sustantivo(sn(_, _, Sust, _), Sust).
-
-% obtener_articulo(+SN, -Articulo)
-% Extrae el artículo del SN (retorna 'ninguno' si no hay)
-
-obtener_articulo(sn(Art, _, _, _), Articulo) :-
-    ( Art = vacio -> Articulo = ninguno ; Articulo = Art ).
-
-% obtener_adjetivos(+SN, -Adjetivos)
-% Extrae todos los adjetivos del SN en una sola lista
-
-obtener_adjetivos(sn(_, Adj1, _, Adj2), Adjetivos) :-
-    append(Adj1, Adj2, Adjetivos).
-
-% obtener_genero_numero(+SN, +Idioma, -Genero, -Numero)
-% Extrae el género y número del sustantivo en el SN
-
-obtener_genero_numero(sn(_, _, Sust, _), Idioma, Gen, Num) :-
-    sustantivo(Idioma, Sust, Gen, Num).
-
-% === PREDICADOS GETTER (SV) ===
-% obtener_verbo(+SV, -Verbo)
-% Extrae el verbo del SV
-
-obtener_verbo(sv(Verbo), Verbo).
-
 % === PREDICADOS DE VALIDACIÓN (SN) ===
 % es_sn_valido(+SN, +Idioma)
 % Verifica que un SN sea válido en el idioma especificado
@@ -286,21 +256,6 @@ traducir_palabra(sustantivo, Palabra, PalabraTrad) :-
 
 traducir_palabra(verbo, Palabra, PalabraTrad) :-
     traducir_verbo(Palabra, PalabraTrad).
-
-% === PREDICADOS DE INFORMACIÓN ===
-% obtener_info_sn(+SN, +Idioma, -Articulo, -Adjetivos, -Sustantivo, -Genero, -Numero)
-% Obtiene información completa sobre un SN de forma legible
-
-obtener_info_sn(SN, Idioma, Articulo, Adjetivos, Sustantivo, Genero, Numero) :-
-    descomponer_sn(SN, Articulo, Adjetivos, Sustantivo, Genero, Numero, Idioma),
-    es_sn_valido(SN, Idioma).
-
-% obtener_info_sv(+SV, +Idioma, -Verbo)
-% Obtiene información completa sobre un SV de forma legible
-
-obtener_info_sv(SV, Idioma, Verbo) :-
-    descomponer_sv(SV, Verbo, Idioma),
-    es_sv_valido(SV, Idioma).
 
 % === GRAMÁTICAS DE ORACIÓN ===
 oracion_esp(oracion(SN, SV)) -->
