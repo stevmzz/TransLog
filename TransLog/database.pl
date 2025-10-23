@@ -6,7 +6,7 @@
     sustantivo/4,
     adjetivo/4,
     verbo/4,
-    pronombre/2,
+    pronombre/4,
     interrogativo/2,
     preposicion/2,
     conjuncion/2,

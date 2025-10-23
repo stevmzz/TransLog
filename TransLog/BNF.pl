@@ -6,10 +6,10 @@
 :- use_module(logic).
 
 % ======================================================
-% Gramática libre de contexto (CFG / DCG)
+% GramÃ¡tica libre de contexto (CFG / DCG)
 % ======================================================
 
-% Oración: un Sintagma Nominal (SN) seguido de un Sintagma Verbal (SV)
+% OraciÃ³n: un Sintagma Nominal (SN) seguido de un Sintagma Verbal (SV)
 oracion(IdiomaOrigen, IdiomaDestino, TradEsp, TradIng) -->
     sn(IdiomaOrigen, IdiomaDestino, TradEspSN, TradIngSN),
     sv(IdiomaOrigen, IdiomaDestino, TradEspSV, TradIngSV),
@@ -54,7 +54,7 @@ opcional_sn(_, _, [], []) --> [].
 % ======================================================
 % Predicado principal
 % ======================================================
-% Traduce una oración entre español e inglés
+% Traduce una oraciÃ³n entre espaÃ±ol e inglÃ©s
 % Ejemplo: traducir_oracion([el, perro, corre], esp, T).
 
 traducir_oracion(ListaPalabras, IdiomaOrigen, Traduccion) :-
