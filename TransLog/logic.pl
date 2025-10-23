@@ -1,5 +1,7 @@
 :- encoding(utf8).
 
+:- module(logic, []).
+
 % === SINTAGMA NOMINAL (SN) ===
 % sn_esp(-Genero, -Numero, -Estructura)//
 % Reconoce un SN completo en español
