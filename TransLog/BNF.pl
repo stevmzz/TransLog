@@ -1,46 +1,42 @@
 :- encoding(utf8).
-:- module(bnf, [traducir_oracion/3]).
-:- use_module(database).
-:- use_module(logic).
+:- consult('database.pl').
+:- consult('logic.pl').
 
 % ======================================================
-% Gramática libre de contexto (DCG)
+% Gramï¿½tica libre de contexto (DCG)
 % ======================================================
 
-oracion(IdiomaOrigen, IdiomaDestino, TradEsp, TradIng) -->
-    sn(IdiomaOrigen, IdiomaDestino, TradEspSN, TradIngSN),
-    sv(IdiomaOrigen, IdiomaDestino, TradEspSV, TradIngSV),
-    { append(TradEspSN, TradEspSV, TradEsp),
-      append(TradIngSN, TradIngSV, TradIng) }.
+traducir_esp_eng(ListaPalabras, Traduccion) :-
+    parsear_oracion(ListaPalabras, esp, Oracion, []),
+    traducir_oracion(Oracion, esp, eng, OracionTrad),
+    oracion_a_lista(OracionTrad, Traduccion).
+
+traducir_eng_esp(ListaPalabras, Traduccion) :-
+    parsear_oracion(ListaPalabras, eng, Oracion, []),
+    traducir_oracion(Oracion, eng, esp, OracionTrad),
+    oracion_a_lista(OracionTrad, Traduccion).
+
+% ======================================================
+% Predicados auxiliares de reconstrucciÃ³n
+% ======================================================
+
+oracion_a_lista(oracion(SN, SV), Resultado) :-
+    sn_a_lista(SN, ListaSN),
+    sv_a_lista(SV, ListaSV),
+    append(ListaSN, ListaSV, Resultado).
 
 % ======================================================
 % Sintagma Nominal (SN)
 % ======================================================
 
-sn(IdiomaOrigen, IdiomaDestino, [ArtEsp, SustEsp], [ArtIng, SustIng]) -->
-    [ArtEsp, SustEsp],
-    {
-        articulo(IdiomaOrigen, ArtEsp, Gen, Num),
-        traducir_articulo_ctx(ArtIng, ArtEsp, Gen, Num),
-        sustantivo(IdiomaOrigen, SustEsp, Gen, Num),
-        traducir_sustantivo(SustEsp, SustIng)
-    }.
+sn_a_lista(sn(Art, Adj1, Sust, Adj2), Resultado) :-
+    ( Art = vacio -> ListaArt = [] ; ListaArt = [Art] ),
+    append(ListaArt, Adj1, Temp1),
+    append(Temp1, [Sust], Temp2),
+    append(Temp2, Adj2, Resultado).
 
 % ======================================================
 % Sintagma Verbal (SV)
 % ======================================================
 
-sv(IdiomaOrigen, IdiomaDestino, [VerEsp], [VerIng]) -->
-    [VerEsp],
-    {
-        verbo(IdiomaOrigen, VerEsp, Persona, Num),
-        traducir_verbo(VerEsp, VerIng)
-    }.
-
-% ======================================================
-% Predicado principal
-% ======================================================
-
-traducir_oracion(ListaPalabras, IdiomaOrigen, Traduccion) :-
-    (IdiomaOrigen == esp -> IdiomaDestino = eng ; IdiomaDestino = esp),
-    phrase(oracion(IdiomaOrigen, IdiomaDestino, _, Traduccion), ListaPalabras).
+sv_a_lista(sv(Verbo), [Verbo]).

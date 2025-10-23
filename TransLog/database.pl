@@ -1,27 +1,5 @@
 :- encoding(utf8).
 
-
-:- module(database, [
-    articulo/4,
-    sustantivo/4,
-    adjetivo/4,
-    verbo/4,
-    pronombre/4,
-    interrogativo/2,
-    preposicion/2,
-    conjuncion/2,
-    traducir_articulo/2,
-    traducir_articulo_ctx/4,
-    traducir_sustantivo/2,
-    traducir_adjetivo/2,
-    traducir_verbo/2,
-    traducir_pronombre/2,
-    traducir_interrogativo/2,
-    traducir_preposicion/2,
-    traducir_conjuncion/2
-
-]).
-
 % === ARTÍCULOS ===
 % articulo(idioma, articulo, genero, numero)
 

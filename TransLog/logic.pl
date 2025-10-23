@@ -1,7 +1,5 @@
 :- encoding(utf8).
 
-:- module(logic, []).
-
 % === SINTAGMA NOMINAL (SN) ===
 % sn_esp(-Genero, -Numero, -Estructura)//
 % Reconoce un SN completo en español
@@ -303,3 +301,24 @@ obtener_info_sn(SN, Idioma, Articulo, Adjetivos, Sustantivo, Genero, Numero) :-
 obtener_info_sv(SV, Idioma, Verbo) :-
     descomponer_sv(SV, Verbo, Idioma),
     es_sv_valido(SV, Idioma).
+
+% === GRAMÁTICAS DE ORACIÓN ===
+oracion_esp(oracion(SN, SV)) -->
+    sn_esp(_, _, SN),
+    sv_esp(SV).
+
+oracion_eng(oracion(SN, SV)) -->
+    sn_eng(_, _, SN),
+    sv_eng(SV).
+
+% === PREDICADOS DE PARSING (ORACIÓN) ===
+parsear_oracion(Lista, esp, Oracion, Resto) :-
+    phrase(oracion_esp(Oracion), Lista, Resto).
+
+parsear_oracion(Lista, eng, Oracion, Resto) :-
+    phrase(oracion_eng(Oracion), Lista, Resto).
+
+% === PREDICADOS DE TRADUCCIÓN (ORACIÓN) ===
+traducir_oracion(oracion(SNOrigen, SVOrigen), IdiomaOrigen, IdiomaDestino, oracion(SNDestino, SVDestino)) :-
+    traducir_sn(SNOrigen, IdiomaOrigen, IdiomaDestino, SNDestino),
+    traducir_sv(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino).
