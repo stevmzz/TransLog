@@ -1164,3 +1164,16 @@ traducir_conjuncion(and, y).
 traducir_conjuncion(or, o).
 traducir_conjuncion(but, pero).
 traducir_conjuncion(because, porque).
+
+% === NEGACIONES ===
+% negacion(idioma, negacion)
+
+% Español:
+negacion(esp, no).
+
+% Inglés:
+negacion(eng, not).
+
+% Traducción de negaciones
+traducir_negacion(no, not).
+traducir_negacion(not, no).

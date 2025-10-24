@@ -32,6 +32,36 @@ sv_esp(sv(Verbo)) -->
 sv_eng(sv(Verbo)) -->
     verbo_eng(Verbo).
 
+% === SINTAGMA VERBAL CON NEGACIÓN ===
+% sv_esp_negativo(-Estructura)//
+% Reconoce un SV negativo en español: "no" + verbo
+
+sv_esp_negativo(sv_neg(Negacion, Verbo)) -->
+    negacion_esp(Negacion),
+    verbo_esp(Verbo).
+
+% sv_eng_negativo(-Estructura)//
+% Reconoce un SV negativo en inglés: "not" + verbo
+
+sv_eng_negativo(sv_neg(Negacion, Verbo)) -->
+    negacion_eng(Negacion),
+    verbo_eng(Verbo).
+
+% === SINTAGMA INTERROGATIVO ===
+% si_esp(-Interrogativo)//
+% Reconoce un sintagma interrogativo en español
+
+si_esp(Interrogativo) -->
+    [Palabra],
+    { interrogativo(esp, Palabra), Interrogativo = Palabra }.
+
+% si_eng(-Interrogativo)//
+% Reconoce un sintagma interrogativo en inglés
+
+si_eng(Interrogativo) -->
+    [Palabra],
+    { interrogativo(eng, Palabra), Interrogativo = Palabra }.
+
 % === ARTÍCULOS (OPCIONALES) ===
 % articulo_opt_esp(-Genero, -Numero, -Articulo)//
 
@@ -106,6 +136,19 @@ verbo_eng(Verbo) -->
     [Palabra],
     { verbo(eng, Palabra, _, _), Verbo = Palabra }.
 
+% === NEGACIONES ===
+% negacion_esp(-Negacion)//
+
+negacion_esp(Negacion) -->
+    [Palabra],
+    { negacion(esp, Palabra), Negacion = Palabra }.
+
+% negacion_eng(-Negacion)//
+
+negacion_eng(Negacion) -->
+    [Palabra],
+    { negacion(eng, Palabra), Negacion = Palabra }.
+
 % === PREDICADOS DE PARSING (SN) ===
 % parsear_sn(+Lista, +Idioma, -SN, -Resto)
 % Intenta parsear un SN desde una lista de palabras
@@ -125,6 +168,20 @@ parsear_sv(Lista, esp, SV, Resto) :-
 
 parsear_sv(Lista, eng, SV, Resto) :-
     phrase(sv_eng(SV), Lista, Resto).
+
+% === PREDICADOS DE PARSING (SV CON O SIN NEGACIÓN) ===
+% parsear_sv_con_negacion(+Lista, +Idioma, -SV, -Resto)
+% Parsea SV que puede ser negativo o normal
+
+parsear_sv_con_negacion(Lista, esp, SV, Resto) :-
+    (   phrase(sv_esp_negativo(SV), Lista, Resto)
+    ;   phrase(sv_esp(SV), Lista, Resto)
+    ).
+
+parsear_sv_con_negacion(Lista, eng, SV, Resto) :-
+    (   phrase(sv_eng_negativo(SV), Lista, Resto)
+    ;   phrase(sv_eng(SV), Lista, Resto)
+    ).
 
 % === PREDICADOS DE DESCOMPOSICIÓN (SN) ===
 % descomponer_sn(+SN, -Articulo, -Adjetivos, -Sustantivo, -Genero, -Numero, +Idioma)
@@ -146,6 +203,21 @@ descomponer_sn(sn(Art, Adj1, Sust, Adj2), Articulo, Adjetivos, Sustantivo, Gener
 
 descomponer_sv(sv(Verbo), Verbo, Idioma) :-
     verbo(Idioma, Verbo, _, _).
+
+% === PREDICADOS DE DESCOMPOSICIÓN (SV NEGATIVO) ===
+% descomponer_sv_negativo(+SV, -Negacion, -Verbo, +Idioma)
+% Descompone un SV negativo en sus componentes
+
+descomponer_sv_negativo(sv_neg(Negacion, Verbo), Negacion, Verbo, Idioma) :-
+    negacion(Idioma, Negacion),
+    verbo(Idioma, Verbo, _, _).
+
+% === PREDICADOS DE DESCOMPOSICIÓN (INTERROGATIVOS) ===
+% descomponer_si(+SI, -Interrogativo)
+% Descompone un SI en sus componentes
+
+descomponer_si(Interrogativo, Interrogativo) :-
+    (interrogativo(esp, Interrogativo) ; interrogativo(eng, Interrogativo)).
 
 % === PREDICADOS DE VALIDACIÓN (SN) ===
 % es_sn_valido(+SN, +Idioma)
@@ -190,6 +262,14 @@ validar_lista_adjetivos([Adj|Rest], Idioma) :-
 es_sv_valido(sv(Verbo), Idioma) :-
     verbo(Idioma, Verbo, _, _).
 
+% === PREDICADOS DE VALIDACIÓN (SV NEGATIVO) ===
+% es_sv_negativo_valido(+SV, +Idioma)
+% Verifica que un SV negativo sea válido
+
+es_sv_negativo_valido(sv_neg(Negacion, Verbo), Idioma) :-
+    negacion(Idioma, Negacion),
+    verbo(Idioma, Verbo, _, _).
+
 % === PREDICADOS DE RECONSTRUCCIÓN (SN) ===
 % reconstruir_sn(+Articulo, +Adjetivos, +Sustantivo, +Idioma, -SN)
 % Reconstruye un SN desde sus componentes
@@ -204,6 +284,13 @@ reconstruir_sn(Articulo, Adjetivos, Sustantivo, Idioma, sn(Art, Adjetivos, Susta
 
 reconstruir_sv(Verbo, Idioma, sv(Verbo)) :-
     es_sv_valido(sv(Verbo), Idioma).
+
+% === PREDICADOS DE RECONSTRUCCIÓN (SV NEGATIVO) ===
+% reconstruir_sv_negativo(+Negacion, +Verbo, +Idioma, -SV)
+% Reconstruye un SV negativo desde sus componentes
+
+reconstruir_sv_negativo(Negacion, Verbo, Idioma, sv_neg(Negacion, Verbo)) :-
+    es_sv_negativo_valido(sv_neg(Negacion, Verbo), Idioma).
 
 % === PREDICADOS DE TRADUCCIÓN (SN) ===
 % traducir_sn(+SNOrigen, +IdiomaOrigen, +IdiomaDestino, -SNDestino)
@@ -232,6 +319,25 @@ traducir_sv(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino) :-
     traducir_palabra(verbo, Verbo, VerboCorrecto),
     % Reconstruir el SV en el idioma destino
     reconstruir_sv(VerboCorrecto, IdiomaDestino, SVDestino).
+
+% === PREDICADOS DE TRADUCCIÓN (SV NEGATIVO) ===
+% traducir_sv_negativo(+SVOrigen, +IdiomaOrigen, +IdiomaDestino, -SVDestino)
+% Traduce un SV negativo completo
+
+traducir_sv_negativo(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino) :-
+    descomponer_sv_negativo(SVOrigen, Negacion, Verbo, IdiomaOrigen),
+    traducir_negacion(Negacion, NegacionTrad),
+    traducir_palabra(verbo, Verbo, VerboCorrecto),
+    reconstruir_sv_negativo(NegacionTrad, VerboCorrecto, IdiomaDestino, SVDestino).
+
+% === PREDICADOS DE TRADUCCIÓN (INTERROGATIVOS) ===
+% traducir_si(+Interrogativo, +IdiomaOrigen, +IdiomaDestino, -InterrogativoTrad)
+% Traduce un sintagma interrogativo
+
+traducir_si(Interrogativo, IdiomaOrigen, IdiomaDestino, InterrogativoTrad) :-
+    interrogativo(IdiomaOrigen, Interrogativo),
+    traducir_interrogativo(Interrogativo, InterrogativoTrad),
+    interrogativo(IdiomaDestino, InterrogativoTrad).
 
 % === PREDICADOS AUXILIARES DE TRADUCCIÓN ===
 % traducir_articulo_con_contexto(+Articulo, +Genero, +Numero, +IdiomaOrigen, +IdiomaDestino, -ArticuloTrad)
@@ -266,6 +372,46 @@ oracion_eng(oracion(SN, SV)) -->
     sn_eng(_, _, SN),
     sv_eng(SV).
 
+% === GRAMÁTICAS ACTUALIZADAS (CON NEGACIÓN) ===
+% oracion_esp_con_negacion(-Estructura)//
+% Oración en español que puede tener negación
+
+oracion_esp_con_negacion(oracion(SN, SV)) -->
+    sn_esp(_, _, SN),
+    (   sv_esp_negativo(SV)
+    ;   sv_esp(SV)
+    ).
+
+% oracion_eng_con_negacion(-Estructura)//
+% Oración en inglés que puede tener negación
+
+oracion_eng_con_negacion(oracion(SN, SV)) -->
+    sn_eng(_, _, SN),
+    (   sv_eng_negativo(SV)
+    ;   sv_eng(SV)
+    ).
+
+% === GRAMÁTICAS PARA PREGUNTAS ===
+% pregunta_esp(-Estructura)//
+% Pregunta en español: SI + SN + SV
+
+pregunta_esp(pregunta(SI, SN, SV)) -->
+    si_esp(SI),
+    sn_esp(_, _, SN),
+    (   sv_esp_negativo(SV)
+    ;   sv_esp(SV)
+    ).
+
+% pregunta_eng(-Estructura)//
+% Pregunta en inglés: SI + SN + SV
+
+pregunta_eng(pregunta(SI, SN, SV)) -->
+    si_eng(SI),
+    sn_eng(_, _, SN),
+    (   sv_eng_negativo(SV)
+    ;   sv_eng(SV)
+    ).
+
 % === PREDICADOS DE PARSING (ORACIÓN) ===
 parsear_oracion(Lista, esp, Oracion, Resto) :-
     phrase(oracion_esp(Oracion), Lista, Resto).
@@ -273,7 +419,49 @@ parsear_oracion(Lista, esp, Oracion, Resto) :-
 parsear_oracion(Lista, eng, Oracion, Resto) :-
     phrase(oracion_eng(Oracion), Lista, Resto).
 
+% === PREDICADOS DE PARSING ACTUALIZADOS ===
+% parsear_oracion_con_negacion(+Lista, +Idioma, -Oracion, -Resto)
+% Parsea oración que puede tener negación
+
+parsear_oracion_con_negacion(Lista, esp, Oracion, Resto) :-
+    phrase(oracion_esp_con_negacion(Oracion), Lista, Resto).
+
+parsear_oracion_con_negacion(Lista, eng, Oracion, Resto) :-
+    phrase(oracion_eng_con_negacion(Oracion), Lista, Resto).
+
+% parsear_pregunta(+Lista, +Idioma, -Pregunta, -Resto)
+% Parsea una pregunta
+
+parsear_pregunta(Lista, esp, Pregunta, Resto) :-
+    phrase(pregunta_esp(Pregunta), Lista, Resto).
+
+parsear_pregunta(Lista, eng, Pregunta, Resto) :-
+    phrase(pregunta_eng(Pregunta), Lista, Resto).
+
 % === PREDICADOS DE TRADUCCIÓN (ORACIÓN) ===
 traducir_oracion(oracion(SNOrigen, SVOrigen), IdiomaOrigen, IdiomaDestino, oracion(SNDestino, SVDestino)) :-
     traducir_sn(SNOrigen, IdiomaOrigen, IdiomaDestino, SNDestino),
     traducir_sv(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino).
+
+% === PREDICADOS DE TRADUCCIÓN PARA ORACIONES CON NEGACIÓN ===
+% traducir_oracion_con_negacion(+OracionOrigen, +IdiomaOrigen, +IdiomaDestino, -OracionDestino)
+% Traduce oración completa considerando negación
+
+traducir_oracion_con_negacion(oracion(SNOrigen, SVOrigen), IdiomaOrigen, IdiomaDestino, oracion(SNDestino, SVDestino)) :-
+    traducir_sn(SNOrigen, IdiomaOrigen, IdiomaDestino, SNDestino),
+    (   SVOrigen = sv_neg(_, _)
+    ->  traducir_sv_negativo(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino)
+    ;   traducir_sv(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino)
+    ).
+
+% === PREDICADOS DE TRADUCCIÓN PARA PREGUNTAS ===
+% traducir_pregunta(+PreguntaOrigen, +IdiomaOrigen, +IdiomaDestino, -PreguntaDestino)
+% Traduce una pregunta completa
+
+traducir_pregunta(pregunta(SIOrigen, SNOrigen, SVOrigen), IdiomaOrigen, IdiomaDestino, pregunta(SIDestino, SNDestino, SVDestino)) :-
+    traducir_si(SIOrigen, IdiomaOrigen, IdiomaDestino, SIDestino),
+    traducir_sn(SNOrigen, IdiomaOrigen, IdiomaDestino, SNDestino),
+    (   SVOrigen = sv_neg(_, _)
+    ->  traducir_sv_negativo(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino)
+    ;   traducir_sv(SVOrigen, IdiomaOrigen, IdiomaDestino, SVDestino)
+    ).

@@ -9,8 +9,9 @@
 
 start :-
     nl,
-    write('TransLog v1.0'), nl,
+    write('TransLog v2.0'), nl,
     write('Sistema de Traduccion Logica'), nl,
+    write('Ahora con Negativos e Interrogativos'), nl,
     nl,
     bucle_menu.
 
@@ -72,13 +73,41 @@ traducir_modo(Modo) :-
     read_string(user_input, "\n", "\n", _, Entrada),
     string_lower(Entrada, EntradaLower),
     atom_string(EntradaAtom, EntradaLower),
-    procesar_oracion(EntradaAtom, Modo).
+    procesar_oracion_mejorado(EntradaAtom, Modo).
 
-procesar_oracion(volver, _) :-
+% ======================================================
+% DETECTAR TIPO DE ORACIÓN
+% ======================================================
+
+% es_interrogativo(+Palabra)
+% Verifica si una palabra es un interrogativo
+
+es_interrogativo(Palabra) :-
+    (   interrogativo(esp, Palabra)
+    ;   interrogativo(eng, Palabra)
+    ).
+
+% es_negativa(+ListaPalabras)
+% Verifica si una lista de palabras contiene negación
+
+es_negativa(ListaPalabras) :-
+    member(Palabra, ListaPalabras),
+    (   negacion(esp, Palabra)
+    ;   negacion(eng, Palabra)
+    ), !.
+
+% ======================================================
+% PROCESAMIENTO MEJORADO DE ORACIONES
+% ======================================================
+
+% procesar_oracion_mejorado(+Entrada, +Modo)
+% Detecta si es pregunta, negación u oración normal
+
+procesar_oracion_mejorado(volver, _) :-
     !,
     nl.
 
-procesar_oracion(Entrada, Modo) :-
+procesar_oracion_mejorado(Entrada, Modo) :-
     atom_string(Entrada, String),
     string_codes(String, Codes),
     atom_codes(AtomLimpio, Codes),
@@ -87,7 +116,7 @@ procesar_oracion(Entrada, Modo) :-
     maplist(string_lower, PalabrasString, PalabrasLower),
     maplist(atom_string, PalabrasAtom, PalabrasLower),
     (   validar_entrada(PalabrasAtom)
-    ->  procesar_traduccion(PalabrasAtom, Modo)
+    ->  procesar_traduccion_inteligente(PalabrasAtom, Modo)
     ;   nl,
         write('Entrada vacia o invalida.'), nl,
         nl,
@@ -95,39 +124,108 @@ procesar_oracion(Entrada, Modo) :-
     ).
 
 % ======================================================
-% PROCESAR TRADUCCIÓN
+% TRADUCCIÓN INTELIGENTE (DETECTA TIPO DE ORACIÓN)
 % ======================================================
 
-procesar_traduccion(PalabrasAtom, ei) :-
+% procesar_traduccion_inteligente(+PalabrasAtom, +Modo)
+% Detecta si es pregunta, negación u oración normal y traduce accordingly
+
+procesar_traduccion_inteligente(PalabrasAtom, ei) :-
     !,
-    (   traducir_esp_eng(PalabrasAtom, Traduccion)
-    ->  nl,
-        write('Traduccion: '),
-        atomic_list_concat(Traduccion, ' ', ResultadoStr),
-        write(ResultadoStr),
-        nl,
-        nl,
-        traducir_modo(ei)
-    ;   nl,
-        write('Error en la traduccion.'), nl,
-        nl,
-        traducir_modo(ei)
+    (   PalabrasAtom = [Primer|_],
+        es_interrogativo(Primer)
+    ->  % Es una pregunta
+        (   traducir_esp_eng_pregunta(PalabrasAtom, Traduccion)
+        ->  nl,
+            write('Pregunta traducida: '),
+            atomic_list_concat(Traduccion, ' ', ResultadoStr),
+            write(ResultadoStr),
+            nl,
+            nl,
+            traducir_modo(ei)
+        ;   nl,
+            write('Error en la traduccion de la pregunta.'), nl,
+            nl,
+            traducir_modo(ei)
+        )
+    ;   es_negativa(PalabrasAtom)
+    ->  % Es una oración negativa
+        (   traducir_esp_eng_con_negacion(PalabrasAtom, Traduccion)
+        ->  nl,
+            write('Traduccion: '),
+            atomic_list_concat(Traduccion, ' ', ResultadoStr),
+            write(ResultadoStr),
+            nl,
+            nl,
+            traducir_modo(ei)
+        ;   nl,
+            write('Error en la traduccion.'), nl,
+            nl,
+            traducir_modo(ei)
+        )
+    ;   % Es oración normal
+        (   traducir_esp_eng(PalabrasAtom, Traduccion)
+        ->  nl,
+            write('Traduccion: '),
+            atomic_list_concat(Traduccion, ' ', ResultadoStr),
+            write(ResultadoStr),
+            nl,
+            nl,
+            traducir_modo(ei)
+        ;   nl,
+            write('Error en la traduccion.'), nl,
+            nl,
+            traducir_modo(ei)
+        )
     ).
 
-procesar_traduccion(PalabrasAtom, ie) :-
+procesar_traduccion_inteligente(PalabrasAtom, ie) :-
     !,
-    (   traducir_eng_esp(PalabrasAtom, Traduccion)
-    ->  nl,
-        write('Traduccion: '),
-        atomic_list_concat(Traduccion, ' ', ResultadoStr),
-        write(ResultadoStr),
-        nl,
-        nl,
-        traducir_modo(ie)
-    ;   nl,
-        write('Error en la traduccion.'), nl,
-        nl,
-        traducir_modo(ie)
+    (   PalabrasAtom = [Primer|_],
+        es_interrogativo(Primer)
+    ->  % Es una pregunta
+        (   traducir_eng_esp_pregunta(PalabrasAtom, Traduccion)
+        ->  nl,
+            write('Pregunta traducida: '),
+            atomic_list_concat(Traduccion, ' ', ResultadoStr),
+            write(ResultadoStr),
+            nl,
+            nl,
+            traducir_modo(ie)
+        ;   nl,
+            write('Error en la traduccion de la pregunta.'), nl,
+            nl,
+            traducir_modo(ie)
+        )
+    ;   es_negativa(PalabrasAtom)
+    ->  % Es una oración negativa
+        (   traducir_eng_esp_con_negacion(PalabrasAtom, Traduccion)
+        ->  nl,
+            write('Traduccion: '),
+            atomic_list_concat(Traduccion, ' ', ResultadoStr),
+            write(ResultadoStr),
+            nl,
+            nl,
+            traducir_modo(ie)
+        ;   nl,
+            write('Error en la traduccion.'), nl,
+            nl,
+            traducir_modo(ie)
+        )
+    ;   % Es oración normal
+        (   traducir_eng_esp(PalabrasAtom, Traduccion)
+        ->  nl,
+            write('Traduccion: '),
+            atomic_list_concat(Traduccion, ' ', ResultadoStr),
+            write(ResultadoStr),
+            nl,
+            nl,
+            traducir_modo(ie)
+        ;   nl,
+            write('Error en la traduccion.'), nl,
+            nl,
+            traducir_modo(ie)
+        )
     ).
 
 % ======================================================
